@@ -73,9 +73,9 @@ async function createBranch(octokit, context, branch) {
 
 async function run() {
   try {
-    const sourceBranch = core.getInput("SOURCE_BRANCH", { required: true });
-    const targetBranches = core.getInput("TARGET_BRANCH", { required: true });
-    const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
+    const sourceBranch = core.getInput("source", { required: true });
+    const targetBranches = core.getInput("target", { required: true });
+    const githubToken = core.getInput("github_token", { required: true });
 
     const targetBranchesArray = targetBranches.split(",");
 
