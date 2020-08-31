@@ -72,73 +72,58 @@ async function createBranch(octokit, context, branch) {
 }
 
 async function run() {
+  const source = core.getInput("source", { required: true });
+  const target = core.getInput("target", { required: true });
+  const githubToken = core.getInput("github_token", { required: true });
+
   try {
-    const sourceBranch = core.getInput("source", { required: true });
-    const targetBranches = core.getInput("target", { required: true });
-    const githubToken = core.getInput("github_token", { required: true });
+    console.log(`Making a pull request for ${branch} from ${source}.`);
+    const {
+      payload: { repository },
+    } = github.context;
 
-    const targetBranchesArray = targetBranches.split(",");
+    const octokit = new github.GitHub(githubToken);
+    //part of test
+    const { data: currentPulls } = await octokit.pulls.list({
+      owner: repository.owner.login,
+      repo: repository.name,
+    });
 
-    for (let branch of targetBranchesArray) {
-      console.log(`Making a pull request for ${branch} from ${sourceBranch}.`);
-      const {
-        payload: { repository },
-      } = github.context;
+    //create new branch from source branch and PR between new branch and target branch
+    const context = github.context;
+    const newBranch = `${target}-sync-${context.sha.slice(-4)}`;
+    await createBranch(octokit, context, newBranch);
 
-      const octokit = new github.GitHub(githubToken);
-      //part of test
-      const { data: currentPulls } = await octokit.pulls.list({
+    const currentPull = currentPulls.find((pull) => {
+      return pull.head.ref === newBranch && pull.base.ref === branch;
+    });
+
+    if (!currentPull) {
+      const { data: pullRequest } = await octokit.pulls.create({
         owner: repository.owner.login,
         repo: repository.name,
-      });
-      //create new branch from master branch and PR between new branch and target branch
-
-      const context = github.context;
-      const newBranch = `${branch}-sync-${context.sha.slice(-4)}`;
-      await createBranch(octokit, context, newBranch);
-
-      const currentPull = currentPulls.find((pull) => {
-        return pull.head.ref === newBranch && pull.base.ref === branch;
+        head: newBranch,
+        base: target,
+        title: `sync: ${target}  with ${newBranch}`,
+        body: `sync-branches: syncing branch with ${newBranch}`,
+        draft: false,
       });
 
-      if (!currentPull) {
-        const { data: pullRequest } = await octokit.pulls.create({
-          owner: repository.owner.login,
-          repo: repository.name,
-          head: newBranch,
-          base: branch,
-          title: `sync: ${branch}  with ${newBranch}`,
-          body: `sync-branches: syncing branch with ${newBranch}`,
-          draft: false,
-        });
+      console.log(
+        `Pull request (${pullRequest.number}) successful! You can view it here: ${pullRequest.url}.`
+      );
 
-        console.log(
-          `Pull request (${pullRequest.number}) successful! You can view it here: ${pullRequest.url}.`
-        );
-
-        core.setOutput("PULL_REQUEST_URL", pullRequest.url.toString());
-        core.setOutput("PULL_REQUEST_NUMBER", pullRequest.number.toString());
-        await slackMessage(
-          source,
-          target,
-          pullRequest.url.toString(),
-          "success"
-        );
-      } else {
-        console.log(
-          `There is already a pull request (${currentPull.number}) to ${branch} from ${newBranch}.`,
-          `You can view it here: ${currentPull.url}`
-        );
-
-        core.setOutput("PULL_REQUEST_URL", currentPull.url.toString());
-        core.setOutput("PULL_REQUEST_NUMBER", currentPull.number.toString());
-        await slackMessage(
-          source,
-          target,
-          currentPull.url.toString(),
-          "success"
-        );
-      }
+      core.setOutput("PULL_REQUEST_URL", pullRequest.url.toString());
+      core.setOutput("PULL_REQUEST_NUMBER", pullRequest.number.toString());
+      await slackMessage(source, target, pullRequest.url.toString(), "success");
+    } else {
+      console.log(
+        `There is already a pull request (${currentPull.number}) to ${target} from ${newBranch}.`,
+        `You can view it here: ${currentPull.url}`
+      );
+      core.setOutput("PULL_REQUEST_URL", currentPull.url.toString());
+      core.setOutput("PULL_REQUEST_NUMBER", currentPull.number.toString());
+      await slackMessage(source, target, currentPull.url.toString(), "success");
     }
   } catch (error) {
     await slackMessage(source, target, "", "failure");
