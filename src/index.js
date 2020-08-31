@@ -77,7 +77,7 @@ async function run() {
   const githubToken = core.getInput("github_token", { required: true });
 
   try {
-    console.log(`Making a pull request for ${branch} from ${source}.`);
+    console.log(`Making a pull request for ${target} from ${source}.`);
     const {
       payload: { repository },
     } = github.context;
