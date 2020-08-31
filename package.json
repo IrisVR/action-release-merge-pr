@@ -1,0 +1,35 @@
+{
+  "name": "action-release-merge-pr",
+  "version": "0.0.1",
+  "description": "This action automatically creates a PR from the source branch to the target branch when the source branch is modified.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "ncc build src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irisvr/action-release-merge-pr.git"
+  },
+  "keywords": [
+    "actions",
+    "slack",
+    "notify",
+    "github",
+    "merge"
+  ],
+  "author": "Graham Hagger",
+  "license": "TBD",
+  "bugs": {
+    "url": "https://github.com/actions/hello-world-javascript-action/issues"
+  },
+  "homepage": "https://github.com/actions/hello-world-javascript-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^1.1.0",
+    "slack-notify": "^0.1.7"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.24.0"
+  }
+}
