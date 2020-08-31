@@ -1,4 +1,4 @@
-# action-release-merge-prd
+# action-release-merge-pr
 
 GitHub action to automatically create or update a PR from the source branch into a target branch every time a change is made. A webhook can be configured to send both a successful or failure notification to Slack.
 
