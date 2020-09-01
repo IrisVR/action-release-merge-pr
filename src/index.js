@@ -91,11 +91,11 @@ async function run() {
 
     //create new branch from source branch and PR between new branch and target branch
     const context = github.context;
-    const newBranch = `${target}-sync-${context.sha.slice(-4)}`;
+    const newBranch = `${target}-sync-${source}-${context.sha.slice(-4)}`;
     await createBranch(octokit, context, newBranch);
 
     const currentPull = currentPulls.find((pull) => {
-      return pull.head.ref === newBranch && pull.base.ref === branch;
+      return pull.head.ref === newBranch && pull.base.ref === target;
     });
 
     if (!currentPull) {
