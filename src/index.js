@@ -84,9 +84,8 @@ async function run() {
   try {
     console.log(`Making a pull request for ${target} from ${source}.`);
 
-    const octokit = new github.GitHub(githubToken);
     //part of test
-    const { data: currentPulls } = await octokit.pulls.list({
+    const { data: currentPulls } = await github.pulls.list({
       owner: repository.owner.login,
       repo: repository.name,
     });
