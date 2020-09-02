@@ -83,9 +83,6 @@ async function run() {
 
   try {
     console.log(`Making a pull request for ${target} from ${source}.`);
-    const {
-      payload: { repository },
-    } = github.context;
 
     const octokit = new github.GitHub(githubToken);
     //part of test
