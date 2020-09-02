@@ -9146,6 +9146,10 @@ async function run() {
   const target = core.getInput("target", { required: true });
   const githubToken = core.getInput("github_token", { required: true });
 
+  const {
+    payload: { repository },
+  } = github.context;
+
   try {
     console.log(`Making a pull request for ${target} from ${source}.`);
     const {
@@ -9174,7 +9178,7 @@ async function run() {
         repo: repository.name,
         head: newBranch,
         base: target,
-        title: `sync: ${target} with ${branch}`,
+        title: `sync: ${target}  with ${branch}`,
         body: `sync-branches: syncing ${target} with ${branch}`,
         draft: false,
       });
