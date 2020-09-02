@@ -1,6 +1,5 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { Octokit } = require("@octokit/rest");
 const { IncomingWebhook } = require("@slack/webhook");
 
 function slackSuccessMessage(source, target, prUrl) {
@@ -85,7 +84,8 @@ async function run() {
   try {
     console.log(`Making a pull request for ${target} from ${source}.`);
 
-    const octokit = new Octokit();
+    const octokit = github.getOctokit(myToken);
+
     //part of test
     const { data: currentPulls } = await octokit.pulls.list({
       owner: repository.owner.login,
