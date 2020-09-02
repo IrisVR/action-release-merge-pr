@@ -117,7 +117,7 @@ async function run() {
       core.setOutput("PULL_REQUEST_URL", pullRequest.url.toString());
       core.setOutput("PULL_REQUEST_NUMBER", pullRequest.number.toString());
       await slackMessage(
-        repo,
+        repository.name,
         source,
         target,
         pullRequest.url.toString(),
@@ -131,7 +131,7 @@ async function run() {
       core.setOutput("PULL_REQUEST_URL", currentPull.url.toString());
       core.setOutput("PULL_REQUEST_NUMBER", currentPull.number.toString());
       await slackMessage(
-        repo,
+        repository.name,
         source,
         target,
         currentPull.url.toString(),
@@ -139,7 +139,7 @@ async function run() {
       );
     }
   } catch (error) {
-    await slackMessage(repo, source, target, "", "failure");
+    await slackMessage(repository.name, source, target, "", "failure");
     core.setFailed(error.message);
   }
 }
