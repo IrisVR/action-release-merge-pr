@@ -9153,7 +9153,7 @@ async function run() {
   try {
     console.log(`Making a pull request for ${target} from ${source}.`);
 
-    const octokit = github.getOctokit(myToken);
+    const octokit = github.getOctokit(githubToken);
 
     //part of test
     const { data: currentPulls } = await octokit.pulls.list({
