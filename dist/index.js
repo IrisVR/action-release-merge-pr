@@ -9176,8 +9176,8 @@ async function run() {
         repo: repository.name,
         head: newBranch,
         base: target,
-        title: `sync: ${target}  with ${branch}`,
-        body: `sync-branches: syncing ${target} with ${branch}`,
+        title: `sync: ${target}  with ${source}`,
+        body: `sync-branches: syncing ${target} with ${source}`,
         draft: false,
       });
 
